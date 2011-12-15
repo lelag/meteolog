@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  name: MyString
+  omm_code: MyString
+  lat: 1.5
+  lng: 1.5
+
+two:
+  name: MyString
+  omm_code: MyString
+  lat: 1.5
+  lng: 1.5

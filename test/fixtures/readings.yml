@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  read_at: 2011-12-16 01:03:20
+  station: 
+  temperature: 1.5
+  weather: 1
+  wind_direction: 1
+  wind_strength: 1
+  pressure: 1
+
+two:
+  read_at: 2011-12-16 01:03:20
+  station: 
+  temperature: 1.5
+  weather: 1
+  wind_direction: 1
+  wind_strength: 1
+  pressure: 1

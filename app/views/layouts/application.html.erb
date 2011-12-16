@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Meteolog</title>
-  <%= stylesheet_link_tag    "application" %>
-  <%= javascript_include_tag "application" %>
-  <%= csrf_meta_tags %>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="author" content="Guillaume Michalag" />
+    <title>Meteolog - Weather Log Display</title>
+    <meta name="description" content="Web application display weather data on a map">
+    <link rel="stylesheet" type="text/css" href="http://osiadev.osiatis.fr/static/ext-3.4.0/resources/css/ext-all.css"/>
+    <link rel="stylesheet" type="text/css" href="http://osiadev.osiatis.fr/static/ext-3.4.0/resources/css/xtheme-gray.css"/>
+    <%= stylesheet_link_tag 'custom' %>
+
+    <script type="text/javascript" src="http://osiadev.osiatis.fr/static/ext-3.4.0/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="http://osiadev.osiatis.fr/static/ext-3.4.0/ext-all-debug.js"></script>
+    <%= csrf_meta_tags %>
+    <!-- <link rel="shortcut icon" href="" /> -->
 </head>
 <body>
 

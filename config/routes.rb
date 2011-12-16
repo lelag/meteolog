@@ -1,4 +1,8 @@
 Meteolog::Application.routes.draw do
+  root :to =>'welcome#index'
+
+  resources :readings
+
   resources :stations
 
   # The priority is based upon order of creation:

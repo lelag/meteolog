@@ -1,12 +1,27 @@
 class ReadingsController < ApplicationController
+
   # GET /readings
   # GET /readings.json
   def index
     @readings = Reading.all
-
+    
     respond_to do |format|
       format.html # index.html.erb
-      format.json { render json: @readings }
+      format.json { 
+        s = {};
+        @readings.each do |re|
+          code = re.read_at.strftime("%Y%m%d%H")
+          if !s[code]
+            s[code] = {'max' => 40, 'data' => []}
+          end
+          s[code]['data'].push( {
+            :lat  => re.station.lat,
+            :lon  => re.station.lng,
+            :count => re.temperature
+          })
+        end
+        render json: s
+      }
     end
   end
 
@@ -28,7 +43,9 @@ class ReadingsController < ApplicationController
 
     respond_to do |format|
       format.html # new.html.erb
-      format.json { render json: @reading }
+      format.json { 
+        render json: @reading 
+      }
     end
   end
 

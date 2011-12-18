@@ -12,13 +12,24 @@
 
 MLControlPanelUi = Ext.extend(Ext.Panel, {
     height: 40,
-    width: 100,
+    layout:'hbox',
+    layoutConfig: {
+        align:'middle'
+    },
+
+    //width: 100,
     //style: "border-bottom: 100px;",
 
     initComponent: function() {
         Ext.applyIf(this, {
             frame:true,
-            items: [
+            items: [{
+                  xtype:'button',
+                  text:'Play',
+                  flex:1,
+                  handler: this.playBack,
+                  scope: this
+                },
                 {
                     xtype: 'slider',
                     id:'slider',
@@ -26,11 +37,27 @@ MLControlPanelUi = Ext.extend(Ext.Panel, {
                     value: 0,
                     increment: 1,
                     minValue: 0,
-                    maxValue: 6
+                    maxValue: 6,
+                    flex: 10
                 }
             ]
         });
 
         MLControlPanelUi.superclass.initComponent.call(this);
+    },
+    playBack : function(button) {
+      var b = button;
+      b.disable();
+      var slider = Ext.getCmp('slider');
+      var delay = 1000;
+      for(var i=0, j=0; i <= slider.maxValue; i++) {
+        setTimeout(function() {
+          slider.setValue(j);
+          j++;
+          if(j==i)
+            b.enable();
+        }, delay);
+        delay = delay + 500;
+      }
     }
 });

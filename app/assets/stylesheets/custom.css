@@ -3,7 +3,7 @@
  * Copyright(c) 2010 Paul Panserrieu, <paul@42loops.com>
  */
 
-@import url(http://fonts.googleapis.com/css?family=Lobster);
+@import url(http://fonts.googleapis.com/css?family=Righteous);
 @import url(http://fonts.googleapis.com/css?family=Droid+Sans);
 
 #loading-mask{
@@ -105,7 +105,7 @@
 
 #apropos-et-aide h1 {
   color:#434343;
-  font-family: 'Lobster', arial, serif;
+  font-family: 'Righteous', arial, serif;
   font-size:18px;
 }
 
@@ -124,7 +124,7 @@
 #ie-oups h1 {
   color:#434343;
   padding-top:10pt;
-  font-family: 'Lobster', arial, serif;
+  font-family: 'Righteous', arial, serif;
   font-size:18px;
 }
 
@@ -138,13 +138,13 @@
 
 .x-window-header-text {
   color:#434343;
-  font-family: 'Lobster', arial, serif;
+  font-family: 'Righteous', arial, serif;
   font-size:24px;
 }
 
 .x-panel-header {
   color:#434343;
-  font-family: 'Lobster', arial, serif;
+  font-family: 'Righteous', arial, serif;
   font-size:24px;
 }
 
@@ -154,7 +154,7 @@
 }
 
 .x-grid3-hd-row td{
-  font-family: 'Lobster', arial, serif;
+  font-family: 'Righteous', arial, serif;
   color:#434343;
 }
 
@@ -199,5 +199,14 @@
 .ext-strict .x-small-editor .x-form-text {
   font-weight:bold;
   font-family: 'Droid Sans', arial, serif;
+}
+
+#slider {
+    padding-top:6px;
+    background-image:url(/assets/ticks.gif);
+}
+
+#slider .x-slider-thumb {
+    background-image:url(/assets/slider-thumb.png);
 }
 

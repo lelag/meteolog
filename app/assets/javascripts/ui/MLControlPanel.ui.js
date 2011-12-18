@@ -13,20 +13,20 @@
 MLControlPanelUi = Ext.extend(Ext.Panel, {
     height: 40,
     width: 100,
+    //style: "border-bottom: 100px;",
 
     initComponent: function() {
         Ext.applyIf(this, {
             frame:true,
             items: [
                 {
-                    xtype: 'button',
-                    text: 'Play',
-                    flex: 1
-                },
-                {
                     xtype: 'slider',
+                    id:'slider',
                     height: 40,
-                    value: 40
+                    value: 0,
+                    increment: 1,
+                    minValue: 0,
+                    maxValue: 6
                 }
             ]
         });

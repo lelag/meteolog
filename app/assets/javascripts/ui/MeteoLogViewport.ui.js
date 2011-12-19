@@ -10,6 +10,10 @@
  * Do NOT hand edit this file.
  */
 
+function isOldIE() {
+  return Ext.IE6 || Ext.isIE7 || Ext.isIE8;
+}
+
 MeteoLogViewportUi = Ext.extend(Ext.Viewport, {
     layout: 'border',
 

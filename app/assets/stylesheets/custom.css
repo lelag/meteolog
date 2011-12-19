@@ -62,8 +62,8 @@
 
 .splash-beta {
   position:absolute;
-  left:97pt;
-  top:2pt;
+  left:300px;
+  top:-15px;
   height:auto;
   background-repeat: no-repeat;
   background-position:center center;
@@ -86,6 +86,17 @@
   padding-left:30pt;
   padding-top:10pt;
   padding-right:30pt;
+}
+
+#apropos-et-aide li {
+  display: list-item;
+  font-family: 'Droid Sans', arial, serif;
+  font-size:13px;
+}
+
+#apropos-et-aide ul {
+  list-style-type:square;
+  padding-left:30px;
 }
 
 #apropos-et-aide p{
@@ -142,7 +153,7 @@
   font-size:24px;
 }
 
-.x-panel-header {
+.main_window .x-panel-header-text {
   color:#434343;
   font-family: 'Righteous', arial, serif;
   font-size:24px;

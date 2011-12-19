@@ -8,6 +8,31 @@
         </div>
 
         <div class="x-hide-display">
+          <div id='apropos-et-aide' >
+            <h1>About MeteoLog</h1>
+            <p>This application is a visialization tool for public weather observations made available by Meteo France.</p>
+            <p>You can visualize on a map the variation and evolution of several meteorological indicators :
+            <ul>
+              <li>Temperature</li>
+              <li>Atmospheric Pressure</li>
+              <li>Wind Speed</li>
+              <li>Wind Direction (Soon)</li>
+              <li>Weather description (Soon)</li>
+            </ul>
+            </p>
+            <p>Click on <i>Switch Layer Type</i> to choose a different indicator.</p>
+            <p>You can also play an animation of the data you selected by clicking <i>Play</i>.</p>
+
+            <p>The data used by this tool is available on 
+            <a href="http://france.meteofrance.com/france/observations">Meteo France website</a>.
+
+            <p>You can send suggestion to <a href="http://twitter.com/le_lag">@le_lag on twitter</a>.</p>
+          </div>
+        </div>
+
+
+
+        <div class="x-hide-display">
           <div id='ie-oups' >
             <h1>This application might not work well with your browser...</h1>
             <p>If you encounter issues, please download a more recent one : </p>
@@ -21,14 +46,22 @@
         </div>
 
         <div id='main' > </div> 
-        <div id='beta' > </div> 
+        <div id='beta' > 
+       <div class="splash-beta"><img src="assets/splash_beta.png" style="opacity:0.7"></div> 
+        </div> 
 
+        <%= javascript_include_tag "ui/StationReadingStore.js" %>
         <%= javascript_include_tag "ui/MeteoLogViewport.ui.js" %>
         <%= javascript_include_tag "ui/MeteoLogViewport.js" %>
         <%= javascript_include_tag "ui/MLMapPanel.ui.js" %>
         <%= javascript_include_tag "ui/MLMapPanel.js" %>
         <%= javascript_include_tag "ui/MLControlPanel.ui.js" %>
         <%= javascript_include_tag "ui/MLControlPanel.js" %>
+        <%= javascript_include_tag "ui/MLDetailsReader.ui.js" %>
+        <%= javascript_include_tag "ui/MLDetailsReader.js" %>
+        <%= javascript_include_tag "ui/SettingsForm.ui.js" %>
+        <%= javascript_include_tag "ui/SettingsForm.js" %>
+
         <%= javascript_include_tag "bootstrap.js" %>
 
 

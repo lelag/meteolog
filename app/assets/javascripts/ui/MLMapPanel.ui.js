@@ -3,6 +3,7 @@
 MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
     border: false,
     title: 'MeteoLog Weather Log',
+    cls: 'main_window',
     from_date: new Date(Date.now() - (7*3600*24*1024)),
     to_date: new Date(),
     currentLayer: 'none',

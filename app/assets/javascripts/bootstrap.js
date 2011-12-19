@@ -1,24 +1,27 @@
 
 Ext.onReady(function() {
-    Ext.QuickTips.init();
-    var cmp1 = new MeteoLogViewport({
-        renderTo: Ext.getBody(),
-        listeners: {
-          afterrender: function() {
-            Ext.get('loading').remove();
-            Ext.get('loading-mask').fadeOut({remove:true});
-          }
-        }
-    });
-    cmp1.show();
 
-    if (Ext.isIE) {
+    if(!isOldIE()) {
+      Ext.QuickTips.init();
+      var cmp1 = new MeteoLogViewport({
+          renderTo: Ext.getBody(),
+          listeners: {
+            afterrender: function() {
+              Ext.get('loading').remove();
+              Ext.get('loading-mask').fadeOut({remove:true});
+            }
+          }
+      });
+      cmp1.show();
+    } else {
         setTimeout(function() {
+          Ext.get('loading').remove();
+          Ext.get('loading-mask').fadeOut({remove:true});
           var err_win = new Ext.Window({
                               layout:'fit',
                               width:620,
-                              title:'Oups...',
-                              height:230,
+                              title:'Sorry ...',
+                              height:300,
                               closeAction:'close',
                               contentEl:'ie-oups',
                               modal:true,
@@ -34,6 +37,7 @@ Ext.onReady(function() {
           err_win.show();
         }, 1250);
     }
+
    //humane.js options
    humane.timeout = 0;
    humane.forceNew = true;

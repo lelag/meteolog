@@ -7,8 +7,10 @@ Ext.onReady(function() {
           renderTo: Ext.getBody(),
           listeners: {
             afterrender: function() {
-              Ext.get('loading').remove();
-              Ext.get('loading-mask').fadeOut({remove:true});
+              setTimeout(function() {
+                Ext.get('loading').remove();
+                Ext.get('loading-mask').fadeOut({remove:true});
+              }, 1000);
             }
           }
       });

@@ -10,3 +10,4 @@ test:
 
 production:
   <<: *defaults
+  gmaps_api_key:ABQIAAAA5zHyazu_Llv3H_a1w9d_XhRpEjrOuO3noO1x0jdNNW9JykmvaxQu6DuLyyBacd_YWgPezR2Z3cXKfg

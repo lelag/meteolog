@@ -4,6 +4,15 @@
 // It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
 // the compiled file.
 //
-//= require jquery
-//= require jquery_ujs
-//= require_tree .
+//= require strftime
+//= require ui/StationReadingStore
+//= require ui/StationStore
+//= require ui/MeteoLogViewport.ui
+//= require ui/MeteoLogViewport
+//= require ui/MLMapPanel.ui
+//= require ui/MLMapPanel
+//= require ui/MLControlPanel.ui
+//= require ui/MLControlPanel
+//= require ui/MLDetailsReader.ui
+//= require ui/MLDetailsReader
+//= require bootstrap.js

@@ -17,10 +17,20 @@ MLControlPanelUi = Ext.extend(Ext.Panel, {
         align:'middle'
     },
 
+    registerElement: function(el) {
+      if(!this.registerStore)
+        this.registerStore = {};
+        this.registerStore[el.ident] = el;
+    },
+    getReg: function(ident) {
+      return this.registerStore[ident];
+    },
+
     //width: 100,
     //style: "border-bottom: 100px;",
 
     initComponent: function() {
+        var me = this;
         Ext.applyIf(this, {
             frame:true,
             items: [{
@@ -38,17 +48,27 @@ MLControlPanelUi = Ext.extend(Ext.Panel, {
                     increment: 1,
                     minValue: 0,
                     maxValue: 6,
-                    flex: 10
+                    flex: 10,
+                    ident: 'slider',
+                    listeners: {
+                      render: function(e) {
+                        me.registerElement(e);
+                      },
+                      change: function(s, n, o) {
+                        me.fireEvent('slider_change', s, n, o);
+                      }
+                    }
                 }
             ]
         });
 
         MLControlPanelUi.superclass.initComponent.call(this);
+        this.addEvents('slider_change');
     },
     playBack : function(button) {
       var b = button;
       b.disable();
-      var slider = Ext.getCmp('slider');
+      var slider = this.getReg('slider');
       var delay = 1000;
       for(var i=0, j=0; i <= slider.maxValue; i++) {
         setTimeout(function() {
@@ -59,5 +79,15 @@ MLControlPanelUi = Ext.extend(Ext.Panel, {
         }, delay);
         delay = delay + 500;
       }
+    },
+    setSlider : function(i) {
+      var slider = this.getReg('slider');
+      slider.setValue(i);
+    },
+    resetSlider : function(max) {
+      var slider = this.getReg('slider');
+      slider.setMinValue(0);
+      slider.setMaxValue(max);
+      slider.setValue(0);
     }
 });

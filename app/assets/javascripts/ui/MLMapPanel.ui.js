@@ -4,21 +4,21 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
     border: false,
     title: 'MeteoLog Weather Log',
     cls: 'main_window',
-    from_date: isOldIE() ? false : new Date(Date.now() - (7*3600*24*1024)),
+    //from_date: isOldIE() ? false : new Date(Date.now() - (7*3600*24*1024)),
+    from_date: new Date(1323392457 * 1000),
     to_date: new Date(),
     currentLayer: 'none',
     temperatureLayer: null,
     pressureLayer: null,
     mapData:null,
     mapDataRef: [],
-    slider: null,
     currentId: 0,
     registerElement: function(el) {
       if(!this.registerStore)
         this.registerStore = {};
         this.registerStore[el.ident] = el;
     },
-    getRE: function(ident) {
+    getReg: function(ident) {
       return this.registerStore[ident];
     },
 
@@ -131,7 +131,15 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
         });
         
 
-        this.map = new OpenLayers.Map();
+        this.map = new OpenLayers.Map({
+              eventListeners: {
+                  "click": this.onMapClick.createDelegate(this)
+              }
+        });
+
+        this.markerLayer = new OpenLayers.Layer.Markers( "Markers" );
+
+        
         try {
           this.layer = new OpenLayers.Layer.Google(
                 "Google Physical",
@@ -147,6 +155,8 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
         this.zoom = 6;
 
         this.map.addLayer(this.layer);
+        this.map.addLayer(this.markerLayer);
+
         this.map.addControl(new OpenLayers.Control.LayerSwitcher());
         this.updateMapData = function() {
             this.map.setCenter(this.center);
@@ -169,8 +179,8 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
 
         this.on('afterrender', function() { 
           //set date 
-          this.getRE('from_datefield').setValue(this.from_date);
-          this.getRE('to_datefield').setValue(this.to_date);
+          this.getReg('from_datefield').setValue(this.from_date);
+          this.getReg('to_datefield').setValue(this.to_date);
           setTimeout(function() {
             me.initLayer();
             me.loadMapData(); 
@@ -179,6 +189,7 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
         });
 
         MLMapPanelUi.superclass.initComponent.call(this);
+        this.addEvents('map_click', 'new_map_data');
     },
     loadMapData : function() {
       //get data
@@ -217,14 +228,8 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
       }
       this.mapData = data; 
       this.setLayerData(0);
-      if(!this.slider) {
-        this.slider = Ext.getCmp('slider');
-        this.slider.on('change', this.sliderChanged, this);
-      }
       this.currentId = 0;
-      this.slider.setMinValue(0);
-      this.slider.setMaxValue(this.mapDataRef.length - 1);
-      this.slider.setValue(0);
+      this.fireEvent('new_map_data', this, this.mapDataRef.length -1);
     },
     sliderChanged : function(slider, new_value, old_value) {
       this.setLayerData(new_value);
@@ -280,7 +285,7 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
     onLayerClick : function(b, e) {
         var text = b.text;
         var layer_name = b.layer_name;
-        this.getRE('layer_name_label').setText(text);
+        this.getReg('layer_name_label').setText(text);
         this.setCurrentLayer(layer_name);
     },
     /* setup the vtype for the main datefields */
@@ -294,14 +299,14 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
                   return false;
               }
               if (field.startDateField) {
-                  var start = me.getRE(field.startDateField);
+                  var start = me.getReg(field.startDateField);
                   if (!start.maxValue || (date.getTime() != start.maxValue.getTime())) {
                       start.setMaxValue(date);
                       start.validate();
                   }
               }
               else if (field.endDateField) {
-                  var end = me.getRE(field.endDateField); 
+                  var end = me.getReg(field.endDateField); 
                   if (!end.minValue || (date.getTime() != end.minValue.getTime())) {
                       end.setMinValue(date);
                       end.validate();
@@ -315,5 +320,16 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
           }
       });
 
+    },
+    setStationMarker : function(st_data) {
+        var size = new OpenLayers.Size(32,32);
+        var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
+        var icon = new OpenLayers.Icon('/assets/icons/flag_red.gif', size, offset);
+        this.markerLayer.clearMarkers();
+        this.markerLayer.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(st_data.lng,st_data.lat),icon));
+    },
+    onMapClick : function(e) {
+        var lonlat = this.map.getLonLatFromViewPortPx(e.xy);
+        this.fireEvent('map_click', this, lonlat);
     }
 });

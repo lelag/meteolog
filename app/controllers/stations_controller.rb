@@ -3,9 +3,13 @@ class StationsController < ApplicationController
   # GET /stations.json
   def index
     @stations = Station.all
+    r = {
+      :totalCount => @stations.count,
+      :rows => @stations
+    }
 
     respond_to do |format|
-      format.json { render json: @stations }
+      format.json { render json: r}
     end
   end
 
@@ -21,9 +25,13 @@ class StationsController < ApplicationController
       @readings = Reading.where("station_id = ?", params[:id]).includes(:station)
     end
 
+    r = {
+      :totalCount => @readings.count,
+      :rows => @readings
+    }
 
     respond_to do |format|
-      format.json { render json: @readings}
+      format.json { render json: r}
     end
   end
 

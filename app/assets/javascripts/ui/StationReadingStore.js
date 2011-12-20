@@ -10,12 +10,20 @@
  * Do NOT hand edit this file.
  */
 
-StationReadingStore = Ext.extend(Ext.data.JsonStore, {
+StationReadingStore = Ext.extend(Ext.data.Store, {
     constructor: function(cfg) {
         cfg = cfg || {};
         StationReadingStore.superclass.constructor.call(this, Ext.apply({
             storeId: 'StationReadingStore',
-            fields: [
+            proxy: new Ext.data.HttpProxy({
+              url:'/stations/1.json',
+              method:'get'
+            }),
+            reader: new Ext.data.JsonReader({
+                root:'rows',
+                totalProperty:'totalCount',
+                id:'id'
+            },[
                 {
                     name: 'id'
                 },
@@ -26,7 +34,7 @@ StationReadingStore = Ext.extend(Ext.data.JsonStore, {
                     name: 'temperature'
                 },
                 {
-                    name: 'pression'
+                    name: 'pressure'
                 },
                 {
                     name: 'weather'
@@ -37,7 +45,15 @@ StationReadingStore = Ext.extend(Ext.data.JsonStore, {
                 {
                     name: 'wind_direction'
                 }
-            ]
+            ])
         }, cfg));
+    },
+    loadId : function(id, opts) {
+      if(!opts)
+        opts = {};
+      this.proxy.url = '/stations/'+id+'.json'; 
+      this.proxy.conn.url = '/stations/'+id+'.json'; 
+      this.load(opts);
     }
 });
+MLStationReadingStore = new StationReadingStore();

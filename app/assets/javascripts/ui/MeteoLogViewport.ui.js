@@ -16,17 +16,53 @@ function isOldIE() {
 
 MeteoLogViewportUi = Ext.extend(Ext.Viewport, {
     layout: 'border',
-
+    firstLoad: true,
+    registerElement: function(el) {
+      if(!this.registerStore)
+        this.registerStore = {};
+        this.registerStore[el.ident] = el;
+    },
+    getReg: function(ident) {
+      return this.registerStore[ident];
+    },
     initComponent: function() {
+        var me = this;
         Ext.applyIf(this, {
             items: [
                 {
                     xtype: 'ml_map',
-                    region: 'center'
+                    region: 'center',
+                    ident: 'ml_map',
+                    listeners: {
+                      render: function(e) {
+                        me.registerElement(e);
+                      },
+                      map_click: function(map, lonlat) {
+                        me.getReg('details').expand();
+                        me.getReg('details').setStationNear(lonlat);
+                      },
+                      new_map_data: function(map, max) {
+                        me.getReg('ml_control').resetSlider(max);
+                        if(me.firstLoad) {
+                          Ext.get('beta').shift({ y: 100, duration:1} );
+                          me.firstLoad = false;
+                        }
+                      }
+                    }
                 },
                 {
                     xtype: 'ml_control',
-                    region: 'south'
+                    region: 'south',
+                    ident:'ml_control',
+                    listeners: {
+                      render: function(e) {
+                        me.registerElement(e);
+                      },
+                      slider_change: function(s, n, o) {
+                        me.getReg('ml_map').sliderChanged(s, n, o);
+                        me.getReg('details').sliderChanged(s, n, o);
+                      }
+                    }
                 },
                 {
                     xtype: 'panel',
@@ -47,10 +83,19 @@ MeteoLogViewportUi = Ext.extend(Ext.Viewport, {
                         },
                         {
                             xtype: 'details_reader',
-                            border: false
-                        },
-                        {
-                            xtype: 'settings_form'
+                            border: false,
+                            ident:'details',
+                            listeners: {
+                              render: function(e) {
+                                me.registerElement(e);
+                              },
+                              station_selected: function(dr, st) {
+                                me.getReg('ml_map').setStationMarker(st);
+                              },
+                              rowclick: function(g, i, e) {
+                                me.getReg('ml_control').setSlider(i);
+                              }
+                            }
                         }
                     ]
                 }

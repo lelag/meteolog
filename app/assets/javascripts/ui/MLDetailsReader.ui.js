@@ -12,18 +12,52 @@
 
 MLDetailsReaderUi = Ext.extend(Ext.grid.GridPanel, {
     border: false,
-    title: 'Reading Details (Not Implemented)',
-    store: new StationReadingStore(),
+    title: 'Station Details',
+    store: MLStationReadingStore,
+    registerElement: function(el) {
+      if(!this.registerStore)
+        this.registerStore = {};
+        this.registerStore[el.ident] = el;
+    },
+    getReg: function(ident) {
+      return this.registerStore[ident];
+    },
 
     initComponent: function() {
+        var me = this;
         Ext.applyIf(this, {
+            tbar: [
+                {
+                  xtype:'label',
+                  text:'Station : '
+                }, '-',
+                {
+                  xtype:'combo',
+                  store: MLStationStore,
+                  typeAhead: false,
+                  ident:'combo_station',
+                  width: 150,
+                  displayField:'name',
+                  valueField:'id',
+                  triggerAction: 'all',
+                  listeners : {
+                    render: function(e) {
+                        me.registerElement(e);
+                    },
+                    select : function(c, r, i) {
+                      MLStationReadingStore.loadId(r.data.id);
+                      me.fireEvent('station_selected', me, r.data);
+                    }
+                  }
+                }
+            ],
             columns: [
                 {
                     xtype: 'gridcolumn',
                     dataIndex: 'read_at',
                     header: 'Date/Time',
                     sortable: true,
-                    width: 75
+                    width: 140
                 },
                 {
                     xtype: 'numbercolumn',
@@ -48,18 +82,53 @@ MLDetailsReaderUi = Ext.extend(Ext.grid.GridPanel, {
                     header: 'Wind Speed',
                     sortable: true,
                     width: 75
-                },
-                {
-                    xtype: 'numbercolumn',
-                    align: 'right',
-                    dataIndex: 'weather',
-                    header: 'Weather',
-                    sortable: true,
-                    width: 65
                 }
             ]
         });
 
+
         MLDetailsReaderUi.superclass.initComponent.call(this);
+
+        this.addEvents('station_selected');
+    },
+    getDistanceBetween : function(lon1, lat1, lon2, lat2) {
+      var R = 6371; // km
+      var dLat = (lat2-lat1) * Math.PI / 180;
+      var dLon = (lon2-lon1) * Math.PI / 180;
+      var lat1 = lat1 * Math.PI / 180;
+      var lat2 = lat2 * Math.PI / 180;
+
+      var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+      return R * c;
+    },
+    setStationNear : function(lonlat) {
+      var lat1 = lonlat.lat;
+      var lon1 = lonlat.lon;
+
+      var me = this;
+      var min = {
+        data : null,
+        dist: 9999999
+      }
+      MLStationStore.each(function(r) {
+        var lat2 = r.data.lat;
+        var lon2 = r.data.lng;
+        var dist = me.getDistanceBetween(lon1, lat1, lon2, lat2);
+        if(dist < min.dist) {
+          min.data = r.data;
+          min.dist = dist;
+        }
+      });
+      if(min.data != null) {
+        this.getReg('combo_station').setValue(min.data.id);
+        MLStationReadingStore.loadId(min.data.id);
+        this.fireEvent('station_selected', this, min.data);
+      }
+    },
+    sliderChanged : function(s, n, o) {
+      this.getView().focusRow(n);
+      this.getSelectionModel().selectRow(n);
     }
 });

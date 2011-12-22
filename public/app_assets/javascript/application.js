@@ -1,0 +1,13 @@
+<script type="text/javascript" src="/app_assets/javascript/ui/strftime"</script>
+<script type="text/javascript" src="/app_assets/javascript/ui/StationReadingStore"</script>
+<script type="text/javascript" src="/app_assets/javascript/ui/StationStore"</script>
+<script type="text/javascript" src="/app_assets/javascript/ui/GradientLegend"</script>
+<script type="text/javascript" src="/app_assets/javascript/ui/MeteoLogViewport.ui"</script>
+<script type="text/javascript" src="/app_assets/javascript/ui/MeteoLogViewport"</script>
+<script type="text/javascript" src="/app_assets/javascript/ui/MLMapPanel.ui"</script>
+<script type="text/javascript" src="/app_assets/javascript/ui/MLMapPanel"</script>
+<script type="text/javascript" src="/app_assets/javascript/ui/MLControlPanel.ui"</script>
+<script type="text/javascript" src="/app_assets/javascript/ui/MLControlPanel"</script>
+<script type="text/javascript" src="/app_assets/javascript/ui/MLDetailsReader.ui"</script>
+<script type="text/javascript" src="/app_assets/javascript/ui/MLDetailsReader"</script>
+<script type="text/javascript" src="/app_assets/javascript/bootstrap.js"</script>

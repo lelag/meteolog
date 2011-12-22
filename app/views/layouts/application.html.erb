@@ -7,7 +7,9 @@
     <meta name="description" content="Web application display weather data on a map">
     <link rel="stylesheet" type="text/css" href="http://osiadev.osiatis.fr/static/ext-3.4.0/resources/css/ext-all.css"/>
     <link rel="stylesheet" type="text/css" href="http://osiadev.osiatis.fr/static/ext-3.4.0/resources/css/xtheme-gray.css"/>
-    <%= stylesheet_link_tag 'application' %>
+
+    <link rel="stylesheet" type="text/css" href="/app_assets/stylesheets/custom.css"/>
+    <link rel="stylesheet" type="text/css" href="/app_assets/stylesheets/libnotify.css"/>
 
     <script type="text/javascript" src="http://osiadev.osiatis.fr/static/ext-3.4.0/adapter/ext/ext-base.js"></script>
     <script type="text/javascript" src="http://osiadev.osiatis.fr/static/ext-3.4.0/ext-all-debug.js"></script>
@@ -15,7 +17,11 @@
     <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=false&amp;key=<%= MySettings.gmaps_api_key %>" type="text/javascript"></script>
 
     <script type="text/javascript" src="/OpenLayers/OpenLayers.js"></script>
-    <%= javascript_include_tag "library" %>
+    <script type="text/javascript" src="/vendor_assets/raphael/raphael-min.js"></script>
+    <script type="text/javascript" src="/vendor_assets/raphael/raphael-ext.js"></script>
+    <script type="text/javascript" src="/vendor_assets/humanejs/humane.js"></script>
+    <script type="text/javascript" src="/vendor_assets/Heatmap/heatmap.js"></script>
+    <script type="text/javascript" src="/vendor_assets/Heatmap/heatmap-openlayers.js"></script>
     <script type="text/javascript" src="/GeoExt/lib/GeoExt.js"></script>
 
     <link rel="stylesheet" type="text/css" href="/GeoExt/resources/css/geoext-all-debug.css"></link>

@@ -1,7 +1,7 @@
         <div id="loading-mask"></div>
         <div id="loading"> 
                 <div class="loading-indicator">
-                        <%= image_tag "loading.gif" %>
+                        <%= image_tag "/app_assets/images/loading.gif" %>
                         <br />
                         <span id="loading-msg"></span>
                 </div> 
@@ -37,20 +37,32 @@
             <h1>Your browser is not HTML5 ready and will not let you experience the awesomeness of this application.</h1>
             <p>Please download a more recent one : </p>
               <p>
-                 <a href="http://www.apple.com/safari/"><img src="/assets/safari.png"/></a>
-                 <a href="http://www.google.com/chrome"><img src="/assets/chrome.png" /></a>
-                 <a href="http://www.mozilla.com/firefox"><img src="/assets/firefox.png" /></a>
-                 <a href="http://www.opera.com/download/"><img src="/assets/opera.png" /></a>
+                 <a href="http://www.apple.com/safari/"><img src="/app_assets/images/safari.png"/></a>
+                 <a href="http://www.google.com/chrome"><img src="/app_assets/images/chrome.png" /></a>
+                 <a href="http://www.mozilla.com/firefox"><img src="/app_assets/images/firefox.png" /></a>
+                 <a href="http://www.opera.com/download/"><img src="/app_assets/images/opera.png" /></a>
              </p>
           </div>
         </div>
 
         <div id='main' > </div> 
         <div id='beta' > 
-       <div class="splash-beta"><img src="assets/splash_beta.png" style="opacity:0.7"></div> 
+       <div class="splash-beta"><img src="/app_assets/images/splash_beta.png" style="opacity:0.7"></div> 
         </div> 
 
-        <%= javascript_include_tag "application" %>
+<script type="text/javascript" src="/app_assets/javascript/ui/strftime.js"></script>
+<script type="text/javascript" src="/app_assets/javascript/ui/StationReadingStore.js"></script>
+<script type="text/javascript" src="/app_assets/javascript/ui/StationStore.js"></script>
+<script type="text/javascript" src="/app_assets/javascript/ui/GradientLegend.js"></script>
+<script type="text/javascript" src="/app_assets/javascript/ui/MeteoLogViewport.ui.js"></script>
+<script type="text/javascript" src="/app_assets/javascript/ui/MeteoLogViewport.js"></script>
+<script type="text/javascript" src="/app_assets/javascript/ui/MLMapPanel.ui.js"></script>
+<script type="text/javascript" src="/app_assets/javascript/ui/MLMapPanel.js"></script>
+<script type="text/javascript" src="/app_assets/javascript/ui/MLControlPanel.ui.js"></script>
+<script type="text/javascript" src="/app_assets/javascript/ui/MLControlPanel.js"></script>
+<script type="text/javascript" src="/app_assets/javascript/ui/MLDetailsReader.ui.js"></script>
+<script type="text/javascript" src="/app_assets/javascript/ui/MLDetailsReader.js"></script>
+<script type="text/javascript" src="/app_assets/javascript/bootstrap.js"></script>
 
 
 

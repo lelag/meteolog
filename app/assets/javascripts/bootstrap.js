@@ -43,5 +43,6 @@ Ext.onReady(function() {
    //humane.js options
    humane.timeout = 0;
    humane.forceNew = true;
+
     
 });

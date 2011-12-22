@@ -1,6 +1,7 @@
 //= require ui/strftime
 //= require ui/StationReadingStore
 //= require ui/StationStore
+//= require ui/GradientLegend
 //= require ui/MeteoLogViewport.ui
 //= require ui/MeteoLogViewport
 //= require ui/MLMapPanel.ui

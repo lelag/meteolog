@@ -243,15 +243,15 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
     },
     initLayer : function() {
       this.temperatureLayer = new OpenLayers.Layer.Heatmap( "Temperature", this.map, this.layer, {visible: true, radius:90, opacity:30,
-      gradient:{ 0.45: "rgb(0,0,255)", 0.01: "rgb(0,255,255)", 0.33: "rgb(0,255,0)", 0.66: "yellow", 1.0: "rgb(255,0,0)"}
+      gradient:{ 0.00: "rgb(0,0,255)", 0.40: "rgb(0,255,255)", 0.60: "rgb(0,255,0)", 0.80: "rgb(255,255,0)", 1.0: "rgb(255,0,0)"}
       }, {isBaseLayer: false, opacity: 0.3});
 
       this.pressureLayer = new OpenLayers.Layer.Heatmap( "Pressure", this.map, this.layer, {visible: true, radius:110, opacity:30,
-      gradient:{ 0.45: "rgb(0,0,255)", 0.95: "rgb(0,255,255)", 0.97: "rgb(0,255,0)", 0.99: "yellow", 1.0: "rgb(255,0,0)"}
+      gradient:{ 0.45: "rgb(0,0,255)", 0.95: "rgb(0,255,255)", 0.97: "rgb(0,255,0)", 0.99: "rgb(255,255,0)", 1.0: "rgb(255,0,0)"}
       }, {isBaseLayer: false, opacity: 0.3});
 
       this.windStrengthLayer = new OpenLayers.Layer.Heatmap( "Wind Speed", this.map, this.layer, {visible: true, radius:90, opacity:30,
-      gradient:{ 0.45: "rgb(0,0,255)", 0.01: "rgb(0,255,255)", 0.33: "rgb(0,255,0)", 0.66: "yellow", 1.0: "rgb(255,0,0)"}
+      gradient:{ 0.45: "rgb(0,0,255)", 0.01: "rgb(0,255,255)", 0.33: "rgb(0,255,0)", 0.66: "rgb(255,255,0)", 1.0: "rgb(255,0,0)"}
       }, {isBaseLayer: false, opacity: 0.3});
     },
     getLayer : function(layerName) {

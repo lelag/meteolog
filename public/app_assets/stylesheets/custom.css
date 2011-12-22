@@ -214,10 +214,10 @@
 
 #slider {
     padding-top:6px;
-    background-image:url(/assets/ticks.gif);
+    background-image:url(/app_assets/images/ticks.gif);
 }
 
 #slider .x-slider-thumb {
-    background-image:url(/assets/slider-thumb.png);
+    background-image:url(/app_assets/images/slider-thumb.png);
 }
 

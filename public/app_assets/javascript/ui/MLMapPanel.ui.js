@@ -1,6 +1,7 @@
 
 
 MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
+    id:'test_mapml',
     border: false,
     title: 'MeteoLog Weather Log',
     cls: 'main_window',
@@ -338,7 +339,7 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
     setStationMarker : function(st_data) {
         var size = new OpenLayers.Size(32,32);
         var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
-        var icon = new OpenLayers.Icon('/assets/icons/flag_red.gif', size, offset);
+        var icon = new OpenLayers.Icon('/app_assets/images/icons/flag_red.gif', size, offset);
         this.markerLayer.clearMarkers();
         this.markerLayer.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(st_data.lng,st_data.lat),icon));
     },

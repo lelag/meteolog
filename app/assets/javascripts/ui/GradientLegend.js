@@ -4,8 +4,10 @@ MLGradientLegend = Ext.extend(Ext.Window, {
     title:'test' 
   }),
   width:200,
-  height:100,
+  height:85,
   closeAction:'close',
+  closable:false,
+  resizable:false,
   modal:false,
   isInit: false,
   border: false,
@@ -56,7 +58,7 @@ MLGradientLegend = Ext.extend(Ext.Window, {
     var me = this;
     this.rect.mousemove(function(e, x, y){ 
       var x = e.layerX - 5;
-      var v = x / 180 * me.highValue; 
+      var v = (x / 180 * (me.highValue - me.lowValue)) + me.lowValue; 
       me.tip.setTitle(v.toPrecision(2));
       if(me.tip.hidden)
         me.tip.showAt([e.clientX, e.clientY]);
@@ -70,21 +72,24 @@ MLGradientLegend = Ext.extend(Ext.Window, {
     r.paper.path("M5,35l0,5").attr({stroke:'#000000'});
     r.paper.path("M95,35l0,5").attr({stroke:'#000000'});
     r.paper.path("M185,35l0,5").attr({stroke:'#000000'});
-    this.lowValueEl = r.paper.text(5, 50, this.lowValue);
+    this.lowValueEl = r.paper.text(5, 50, this.lowValue).attr({'text-anchor': 'start'});
     this.middleValueEl = r.paper.text(95, 50, this.middleValue);
     this.highValueEl = r.paper.text(185, 50, this.highValue).attr({'text-anchor': 'end'});
+    this.unitTextEl= r.paper.text(95, 65, "");
   },
   setGradient : function(gradient) {
     var attr = this.buildGradientAttr(gradient);
     this.rect.attr(attr);
   },
-  setLimit : function(low, high) {
+  setLimit : function(low, high, unit) {
     this.lowValue = low;
-    this.middleValue = (high - low) / 2
+    this.middleValue = (high + low) / 2;
     this.highValue = high;
     this.lowValueEl.attr({text: this.lowValue});
     this.middleValueEl.attr({text: this.middleValue});
     this.highValueEl.attr({text: this.highValue});
+    if(unit)
+      this.unitTextEl.attr({text: unit});
   },
   rgbToHex : function(rgb) {
     function decimalToHex (d, padding) {

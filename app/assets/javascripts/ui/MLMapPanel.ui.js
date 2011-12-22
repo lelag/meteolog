@@ -13,6 +13,8 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
     mapData:null,
     mapDataRef: [],
     currentId: 0,
+    gradientLegend: null,
+    gradient: { 0.05: "rgb(0,0,255)", 0.40: "rgb(0,255,255)", 0.60: "rgb(0,255,0)", 0.80: "rgb(255,255,0)", 0.95: "rgb(255,0,0)"},
     registerElement: function(el) {
       if(!this.registerStore)
         this.registerStore = {};
@@ -188,6 +190,10 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
           }, 1000);
         });
 
+        this.gradientLegend = new MLGradientLegend({
+
+        });
+
         MLMapPanelUi.superclass.initComponent.call(this);
         this.addEvents('map_click', 'new_map_data');
     },
@@ -223,7 +229,7 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
 
     },
     processMapData : function(data) {
-      for (var key in data.temperature) {
+      for (var key in data.temperature.data) { 
             this.mapDataRef.push(key);
       }
       this.mapData = data; 
@@ -239,20 +245,28 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
       var currentLayer = this.getLayer(this.currentLayer);
       var date = new Date(this.mapDataRef[id]*1000);
       humane.info(date.strftime("%Y-%m-%d %H:%M"));
-      currentLayer.setDataSet(this.mapData[this.currentLayer][this.mapDataRef[id]]);
+      var mm = this.mapData[this.currentLayer].min_max;
+      var unit = this.mapData[this.currentLayer].unit;
+      if(mm) {
+        var me = this;
+        this.gradientLegend.show();
+        setTimeout(function() {
+          me.gradientLegend.setGradient(me.gradient); 
+          me.gradientLegend.setLimit(mm.min, mm.max, unit ? unit : "");
+        }, 500);
+      } else {
+        this.gradientLegend.hide();
+      }
+      currentLayer.setDataSet(this.mapData[this.currentLayer].data[this.mapDataRef[id]]);
     },
     initLayer : function() {
-      this.temperatureLayer = new OpenLayers.Layer.Heatmap( "Temperature", this.map, this.layer, {visible: true, radius:90, opacity:30,
-      gradient:{ 0.00: "rgb(0,0,255)", 0.40: "rgb(0,255,255)", 0.60: "rgb(0,255,0)", 0.80: "rgb(255,255,0)", 1.0: "rgb(255,0,0)"}
+      this.temperatureLayer = new OpenLayers.Layer.Heatmap( "Temperature", this.map, this.layer, {visible: true, radius:60, opacity:30, gradient:this.gradient}, {isBaseLayer: false, opacity: 0.3});
+
+      this.pressureLayer = new OpenLayers.Layer.Heatmap( "Pressure", this.map, this.layer, {visible: true, radius:60, opacity:30,
+      gradient: this.gradient
       }, {isBaseLayer: false, opacity: 0.3});
 
-      this.pressureLayer = new OpenLayers.Layer.Heatmap( "Pressure", this.map, this.layer, {visible: true, radius:110, opacity:30,
-      gradient:{ 0.45: "rgb(0,0,255)", 0.95: "rgb(0,255,255)", 0.97: "rgb(0,255,0)", 0.99: "rgb(255,255,0)", 1.0: "rgb(255,0,0)"}
-      }, {isBaseLayer: false, opacity: 0.3});
-
-      this.windStrengthLayer = new OpenLayers.Layer.Heatmap( "Wind Speed", this.map, this.layer, {visible: true, radius:90, opacity:30,
-      gradient:{ 0.45: "rgb(0,0,255)", 0.01: "rgb(0,255,255)", 0.33: "rgb(0,255,0)", 0.66: "rgb(255,255,0)", 1.0: "rgb(255,0,0)"}
-      }, {isBaseLayer: false, opacity: 0.3});
+      this.windStrengthLayer = new OpenLayers.Layer.Heatmap( "Wind Speed", this.map, this.layer, {visible: true, radius:60, opacity:30, gradient:this.gradient}, {isBaseLayer: false, opacity: 0.3});
     },
     getLayer : function(layerName) {
         switch(layerName) {

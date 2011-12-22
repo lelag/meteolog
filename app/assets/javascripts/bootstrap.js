@@ -44,13 +44,5 @@ Ext.onReady(function() {
    humane.timeout = 0;
    humane.forceNew = true;
 
-
-   var w = new MLGradientLegend(); 
-
-   setTimeout(function() {
-      w.show();
-  }, 2000);
-
-
     
 });

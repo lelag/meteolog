@@ -5,7 +5,7 @@ MLGradientLegend = Ext.extend(Ext.Window, {
   }),
   width:200,
   height:85,
-  closeAction:'close',
+  closeAction:'hide',
   closable:false,
   resizable:false,
   modal:false,

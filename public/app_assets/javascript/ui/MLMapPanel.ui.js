@@ -15,6 +15,7 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
     mapDataRef: [],
     currentId: 0,
     gradientLegend: null,
+    settingWindow:null,
     gradient: { 0.05: "rgb(0,0,255)", 0.40: "rgb(0,255,255)", 0.60: "rgb(0,255,0)", 0.80: "rgb(255,255,0)", 0.95: "rgb(255,0,0)"},
     registerElement: function(el) {
       if(!this.registerStore)
@@ -127,6 +128,32 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
                               me.registerElement(e);
                           }
                       }
+                    },'->',{
+                      xtype:'button',
+                      iconCls:'rainbow',
+                      enableToggle:true,
+                      ident:'rainbow_button',
+                      handler: this.toggleLegend,
+                      disabled:true,
+                      scope:this,
+                      listeners: {
+                          render: function(e) {
+                              me.registerElement(e);
+                          }
+                      }
+                    },{
+                      xtype:'button',
+                      iconCls:'wrench',
+                      enableToggle:true,
+                      ident:'settings_button',
+                      handler: this.toggleSettings,
+                      scope:this,
+                      listeners: {
+                          render: function(e) {
+                              me.registerElement(e);
+                          }
+                      }
+
                     }
 
                 ]
@@ -140,7 +167,7 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
               }
         });
 
-        this.markerLayer = new OpenLayers.Layer.Markers( "Markers" );
+        this.markerLayer = new OpenLayers.Layer.Markers( "Stations" );
 
         
         try {
@@ -192,8 +219,46 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
         });
 
         this.gradientLegend = new MLGradientLegend({
-
+          listeners:{
+            show: function() {
+              var b = me.getReg('rainbow_button');
+              if(!b.pressed)
+                b.toggle();
+            },
+            hide: function() {
+              var b = me.getReg('rainbow_button');
+              if(b.pressed)
+                b.toggle();
+            }
+          }
         });
+
+        this.settingWindow= new MLSettingWindow({
+          listeners:{
+            show: function() {
+              var b = me.getReg('settings_button');
+              if(!b.pressed)
+                b.toggle();
+            },
+            hide: function() {
+              var b = me.getReg('settings_button');
+              if(b.pressed)
+                b.toggle();
+            },
+            radius_change: function(s, n, o) {
+              me.setGradientRadius(n);
+            },
+            gradient_opacity_change : function(s, n, o) {
+              me.setGradientOpacity(n);
+            },
+            gradient_range_change: function(s, n, t) {
+              me.setGradientRange(s.getValues());
+            }
+          }
+        });
+
+
+
 
         MLMapPanelUi.superclass.initComponent.call(this);
         this.addEvents('map_click', 'new_map_data');
@@ -251,12 +316,14 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
       if(mm) {
         var me = this;
         this.gradientLegend.show();
+        this.getReg('rainbow_button').enable();
         setTimeout(function() {
           me.gradientLegend.setGradient(me.gradient); 
           me.gradientLegend.setLimit(mm.min, mm.max, unit ? unit : "");
         }, 500);
       } else {
         this.gradientLegend.hide();
+        this.getReg('rainbow_button').disable();
       }
       currentLayer.setDataSet(this.mapData[this.currentLayer].data[this.mapDataRef[id]]);
     },
@@ -346,5 +413,67 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
     onMapClick : function(e) {
         var lonlat = this.map.getLonLatFromViewPortPx(e.xy);
         this.fireEvent('map_click', this, lonlat);
+    },
+    toggleLegend : function(b) {
+      if(!b) {
+        var b = this.getReg('rainbow_button');
+        b.toggle();
+      }
+      if(b.pressed) {
+        this.gradientLegend.show();
+      } else {
+        this.gradientLegend.hide();
+      }
+    },
+    toggleSettings : function(b) {
+      if(!b) {
+        var b = this.getReg('settings_button');
+        b.toggle();
+      }
+      if(b.pressed) {
+        var pos = b.getPosition();
+        this.settingWindow.setPosition(pos[0], pos[1] + 50);
+        this.settingWindow.show(b.getEl());
+      } else {
+        this.settingWindow.hide();
+      }
+    },
+    setGradientRadius : function(rout) {
+      var currentLayer = this.getLayer(this.currentLayer);
+      rin = parseInt(rout/2, 10);
+      currentLayer.heatmap.set('radiusIn', rin);
+      currentLayer.heatmap.set('radiusOut', rout);
+      currentLayer.setDataSet(this.mapData[this.currentLayer].data[this.mapDataRef[this.currentId]]);
+    },
+    setGradientOpacity : function(o) {
+      var currentLayer = this.getLayer(this.currentLayer);
+      var opacity = parseInt(255/(100/o), 10);
+      currentLayer.heatmap.set('opacity', opacity);
+      currentLayer.setDataSet(this.mapData[this.currentLayer].data[this.mapDataRef[this.currentId]]);
+    },
+    setGradientRange : function(v) {
+      var currentLayer = this.getLayer(this.currentLayer);
+      function keys(obj) {
+          var keys = [];
+          for(var key in obj) {
+              keys.push(key);
+          }
+          return keys;
+      }
+      var k = keys(this.gradient);
+      k.sort();
+      var g = {}, check = null;
+      for(var i = 0; i < 5; i++)  {
+        if(v[i] == check)
+          return false;
+        g[v[i]/100] = this.gradient[k[i]];
+        check = v[i];
+      }
+      this.gradient = g;
+      currentLayer.heatmap.set('gradient', g);
+      currentLayer.heatmap.initColorPalette();
+      currentLayer.setDataSet(this.mapData[this.currentLayer].data[this.mapDataRef[this.currentId]]);
+      this.gradientLegend.setGradient(this.gradient);
     }
+
 });

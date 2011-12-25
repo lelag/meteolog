@@ -176,10 +176,14 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
 
         
         try {
-          this.layer = new OpenLayers.Layer.OSM();
+          this.layer = new OpenLayers.Layer.Google("Google",
+              {'sphericalMercator': true,
+               'maxExtent': new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
+                type: G_PHYSICAL_MAP
+              });
+          
         } catch(err) {
-          this.layer = new OpenLayers.Layer.MapServer( "OpenLayers WMS", // fallback in case of issues with gmaps.
-          "http://labs.metacarta.com/wms/vmap0", {layers: 'basic'} );
+          this.layer = new OpenLayers.Layer.OSM.Mapnik("World Map");
         }
 
 

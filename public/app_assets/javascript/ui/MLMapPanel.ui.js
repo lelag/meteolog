@@ -1,6 +1,8 @@
 
 
 MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
+    proj4326 : new OpenLayers.Projection("EPSG:4326"),
+    projmerc : new OpenLayers.Projection("EPSG:900913"),
     id:'test_mapml',
     border: false,
     title: 'MeteoLog Weather Log',
@@ -162,6 +164,9 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
         
 
         this.map = new OpenLayers.Map({
+              projection: this.projmerc,
+              displayProjection: this.proj4326,
+          
               eventListeners: {
                   "click": this.onMapClick.createDelegate(this)
               }
@@ -171,17 +176,18 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
 
         
         try {
-          this.layer = new OpenLayers.Layer.Google(
-                "Google Physical",
-                {type: G_PHYSICAL_MAP}
-            );
+          this.layer = new OpenLayers.Layer.Google("Google",
+              {'sphericalMercator': true,
+               'maxExtent': new OpenLayers.Bounds(-20037508.34,-20037508.34,20037508.34,20037508.34),
+                type: G_PHYSICAL_MAP
+              });
+          
         } catch(err) {
-          this.layer = new OpenLayers.Layer.MapServer( "OpenLayers WMS", // fallback in case of issues with gmaps.
-          "http://labs.metacarta.com/wms/vmap0", {layers: 'basic'} );
+          this.layer = new OpenLayers.Layer.OSM.Mapnik("World Map");
         }
 
 
-        this.center = new OpenLayers.LonLat(2.084444, 47.396389); //center on Bourges
+        this.center = new OpenLayers.LonLat(2.084444, 47.396389).transform(this.proj4326, this.projmerc); //center on Bourges
         this.zoom = 6;
 
         this.map.addLayer(this.layer);
@@ -295,9 +301,49 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
 
     },
     processMapData : function(data) {
+      //process temperature
       for (var key in data.temperature.data) { 
-            this.mapDataRef.push(key);
+            this.mapDataRef.push(key); //register day reference
+            
+            //transform coodinate to OpenLayers LonLat objects
+            var datalen = data.temperature.data[key].data.length,  
+                nudata = [];
+
+            while(datalen--){
+                    nudata.push({
+                        lonlat: new OpenLayers.LonLat(data.temperature.data[key].data[datalen].lon, data.temperature.data[key].data[datalen].lat),
+                        count: data.temperature.data[key].data[datalen].count
+                    });
+            }
+            data.temperature.data[key].data = nudata;
       }
+
+      //process pressure
+      for (var key in data.pressure.data) {
+            var datalen = data.pressure.data[key].data.length,  
+                nudata = [];
+            while(datalen--) {
+                    nudata.push({
+                        lonlat: new OpenLayers.LonLat(data.pressure.data[key].data[datalen].lon, data.pressure.data[key].data[datalen].lat),
+                        count: data.pressure.data[key].data[datalen].count
+                    });
+            }
+            data.pressure.data[key].data = nudata;
+      }
+
+      //process wind_strength
+      for (var key in data.wind_strength.data) {
+            var datalen = data.wind_strength.data[key].data.length,  
+                nudata = [];
+            while(datalen--) {
+                    nudata.push({
+                        lonlat: new OpenLayers.LonLat(data.wind_strength.data[key].data[datalen].lon, data.wind_strength.data[key].data[datalen].lat),
+                        count: data.wind_strength.data[key].data[datalen].count
+                    });
+            }
+            data.wind_strength.data[key].data = nudata;
+      }
+      
       this.mapData = data; 
       this.setLayerData(0);
       this.currentId = 0;
@@ -328,13 +374,13 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
       currentLayer.setDataSet(this.mapData[this.currentLayer].data[this.mapDataRef[id]]);
     },
     initLayer : function() {
-      this.temperatureLayer = new OpenLayers.Layer.Heatmap( "Temperature", this.map, this.layer, {visible: true, radius:60, opacity:30, gradient:this.gradient}, {isBaseLayer: false, opacity: 0.3});
+      this.temperatureLayer = new OpenLayers.Layer.Heatmap( "Temperature", this.map, this.layer, {visible: true, radius:60, opacity:30, gradient:this.gradient}, {isBaseLayer: false, opacity: 0.3,projection: new OpenLayers.Projection("EPSG:4326")});
 
       this.pressureLayer = new OpenLayers.Layer.Heatmap( "Pressure", this.map, this.layer, {visible: true, radius:60, opacity:30,
       gradient: this.gradient
-      }, {isBaseLayer: false, opacity: 0.3});
+      }, {isBaseLayer: false, opacity: 0.3, projection: new OpenLayers.Projection("EPSG:4326")});
 
-      this.windStrengthLayer = new OpenLayers.Layer.Heatmap( "Wind Speed", this.map, this.layer, {visible: true, radius:60, opacity:30, gradient:this.gradient}, {isBaseLayer: false, opacity: 0.3});
+      this.windStrengthLayer = new OpenLayers.Layer.Heatmap( "Wind Speed", this.map, this.layer, {visible: true, radius:60, opacity:30, gradient:this.gradient}, {isBaseLayer: false, opacity: 0.3, projection: new OpenLayers.Projection("EPSG:4326")});
     },
     getLayer : function(layerName) {
         switch(layerName) {
@@ -408,10 +454,13 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
         var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
         var icon = new OpenLayers.Icon('/app_assets/images/icons/flag_red.gif', size, offset);
         this.markerLayer.clearMarkers();
-        this.markerLayer.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat(st_data.lng,st_data.lat),icon));
+        var lonlat = new OpenLayers.LonLat(st_data.lng,st_data.lat);
+        lonlat.transform(this.proj4326, this.projmerc);
+        this.markerLayer.addMarker(new OpenLayers.Marker(lonlat ,icon));
     },
     onMapClick : function(e) {
         var lonlat = this.map.getLonLatFromViewPortPx(e.xy);
+        lonlat.transform(this.projmerc, this.proj4326);
         this.fireEvent('map_click', this, lonlat);
     },
     toggleLegend : function(b) {

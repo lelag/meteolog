@@ -61,6 +61,8 @@
                 me.max = data[x][y];
                 // max changed, we need to redraw all existing(lower) datapoints
                 heatmap.get("actx").clearRect(0,0,heatmap.get("width"),heatmap.get("height"));
+                heatmap.get("tactx").clearRect(0,0,heatmap.get("width"),heatmap.get("height"));
+                heatmap.get("cactx").clearRect(0,0,heatmap.get("width"),heatmap.get("height"));
                 for(var one in data)                    
                     for(var two in data[one])
                         heatmap.drawAlpha(one, two, data[one][two]);
@@ -186,27 +188,25 @@
                 me.set("height", config.height || 0);
                 me.set("debug", config.debug);
         },
-        resize: function () {
-                var element = this.get("element"),
-                    canvas = this.get("canvas"),
-                    acanvas = this.get("acanvas");
-                canvas.width = acanvas.width = element.style.width.replace(/px/, "") || this.getWidth(element);
-                this.set("width", canvas.width);
-                canvas.height = acanvas.height = element.style.height.replace(/px/, "") || this.getHeight(element);
-                this.set("height", canvas.height);
-        },
-
         init: function(){
                 var me = this,
                     canvas = document.createElement("canvas"),
                     acanvas = document.createElement("canvas"),
+                    tacanvas = document.createElement("canvas"),
+                    cacanvas = document.createElement("canvas"),
                     element = me.get("element");
                     
                 me.initColorPalette();
 
                 me.set("canvas", canvas);
-                me.set("acanvas", acanvas);
-                me.resize();
+                me.set("acanvas", acanvas);  // main alpha canvas
+                me.set("tcanvas", tacanvas); // temporary alpha canvas
+                me.set("ccanvas", cacanvas); // count / weight alpha canvas
+
+                canvas.width = acanvas.width = tacanvas.width = cacanvas.width = element.style.width.replace(/px/,"")*2 || me.getWidth(element)*2;
+                me.set("width", canvas.width);
+                canvas.height = acanvas.height = tacanvas.height = cacanvas.height = element.style.height.replace(/px/,"")*2 || me.getHeight(element)*2;
+                me.set("height", canvas.height);
                 canvas.style.position = acanvas.style.position = "absolute";
                 canvas.style.top = acanvas.style.top = "0";
                 canvas.style.left = acanvas.style.left = "0";
@@ -221,6 +221,8 @@
                     document.body.appendChild(acanvas);
                 me.set("ctx", canvas.getContext("2d"));
                 me.set("actx", acanvas.getContext("2d"));
+                me.set("tactx", tacanvas.getContext("2d"));
+                me.set("cactx", cacanvas.getContext("2d"));
         },
         initColorPalette: function(){
                 
@@ -316,20 +318,66 @@
                 var me = this,
                     r1 = me.get("radiusIn"),
                     r2 = me.get("radiusOut"),
-                    ctx = me.get("actx"),
+                    ctx = me.get("tactx"),
                     max = me.get("max"),
-                    // create a radial gradient with the defined parameters. we want to draw an alphamap
-                    rgr = ctx.createRadialGradient(x,y,r1,x,y,r2),
+
                     xb = x-r2, yb = y-r2, mul = 2*r2;
-                // the center of the radial gradient has .1 alpha value
-                rgr.addColorStop(0, 'rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');  
-                // and it fades out to 0
-                rgr.addColorStop(1, 'rgba(0,0,0,0)');
-                // drawing the gradient
-                ctx.fillStyle = rgr;  
-                ctx.fillRect(xb,yb,mul,mul);
+
+                
+                ctx.beginPath();
+                ctx.arc(x, y, r2, 0, 2 * Math.PI, false);
+                ctx.fillStyle =  'rgba(50,0,0,'+((count)?(count/me.store.max):'0.1')+')';
+                ctx.fill();
+
+                me.averagePoint(ctx, xb, yb);
+                me.get("tactx").clearRect(0,0,me.get("width"),me.get("height"));
                 // finally colorize the area
                 me.colorize(xb,yb);
+        },
+        averagePoint : function(tctx, x, y) {
+                var me = this,
+                    actx = me.get("actx"),
+                    cctx = me.get("cactx"),
+                    width = me.get("width"),
+                    radiusOut = me.get("radiusOut"),
+                    height = me.get("height");
+                
+                var x2 = radiusOut*2;
+                if(x+x2>width)
+                    x=width-x2;
+                if(x<0)
+                    x=0;
+                if(y<0)
+                    y=0;
+                if(y+x2>height)
+                    y=height-x2;
+
+                var t_image = tctx.getImageData(x,y,x2,x2),
+                    t_imageData = t_image.data;
+                var c_image = cctx.getImageData(x,y,x2,x2),
+                    c_imageData = c_image.data;
+                var a_image = actx.getImageData(x,y,x2,x2),
+                    a_imageData = a_image.data,
+                    a_length = a_imageData.length;
+                // loop thru the area
+                for(var i=3; i < a_length; i+=4){
+                    // [0] -> r, [1] -> g, [2] -> b, [3] -> alpha
+                    var a_alpha = a_imageData[i];
+                    if(a_alpha == null)
+                        continue;
+                    if(t_imageData[i-3] > 45) {
+                      var c_alpha = c_imageData[i]++,
+                          t_alpha = t_imageData[i];
+                      a_imageData[i] = ((t_alpha + (a_alpha * c_alpha)) / (c_alpha + 1)) >> 0;
+                    } 
+                }
+                //saving main grandient alpha map
+                a_image.data = a_imageData;
+                actx.putImageData(a_image,x,y);  
+
+                //saving count map
+                c_image.data = c_imageData;
+                cctx.putImageData(c_image,x,y);  
         },
         toggleDisplay: function(){
                 var me = this,
@@ -357,6 +405,8 @@
             //me.store.max = 1;
             me.get("ctx").clearRect(0,0,w,h);
             me.get("actx").clearRect(0,0,w,h);
+            me.get("tactx").clearRect(0,0,w,h);
+            me.get("cactx").clearRect(0,0,w,h);
         },
         cleanup: function(){
             var me = this;

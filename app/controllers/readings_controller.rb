@@ -42,7 +42,7 @@ class ReadingsController < ApplicationController
             :lat  => re.station.lat,
             :lon  => re.station.lng,
             :count => (re.temperature - min_temp).to_i
-          })
+          }) if re.temperature > - 50
           #wind_dir
           if !wind_dir[ts]
             wind_dir[ts] = [] 

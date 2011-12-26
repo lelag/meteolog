@@ -183,7 +183,7 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
               });
           
         } catch(err) {
-          this.layer = new OpenLayers.Layer.OSM.Mapnik("World Map");
+          this.layer = new OpenLayers.Layer.OSM("World Map");
         }
 
 

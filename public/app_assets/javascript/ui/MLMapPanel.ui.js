@@ -404,6 +404,7 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
 
         if(currentLayer != null) {
           this.map.removeLayer(currentLayer);
+          currentLayer.map = this.map; // workaround for zoom handler cb issue
         }
         this.currentLayer = layer;
         this.map.addLayer(new_layer);

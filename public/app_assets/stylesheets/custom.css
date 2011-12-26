@@ -242,3 +242,7 @@
 .control-stop {
     background-image:url(/app_assets/images/icons/control_stop.gif);
 }
+
+.refresh-icon {
+    background-image:url(/app_assets/images/icons/arrow_refresh.gif);
+}

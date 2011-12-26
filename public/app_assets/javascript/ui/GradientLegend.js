@@ -83,7 +83,7 @@ MLGradientLegend = Ext.extend(Ext.Window, {
   },
   setLimit : function(low, high, unit) {
     this.lowValue = low;
-    this.middleValue = (high + low) / 2;
+    this.middleValue = ((high + low) / 2).toPrecision(2);
     this.highValue = high;
     this.lowValueEl.attr({text: this.lowValue});
     this.middleValueEl.attr({text: this.middleValue});

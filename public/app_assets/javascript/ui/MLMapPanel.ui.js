@@ -7,8 +7,7 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
     border: false,
     title: 'MeteoLog Weather Log',
     cls: 'main_window',
-    //from_date: isOldIE() ? false : new Date(Date.now() - (7*3600*24*1024)),
-    from_date: new Date(1323392457 * 1000),
+    from_date: isOldIE() ? false : new Date(Date.now() - (7*3600*24*1024)),
     to_date: new Date(),
     currentLayer: 'none',
     temperatureLayer: null,
@@ -48,6 +47,7 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
                         ident: 'from_datefield',
                         vtype: 'daterange_ml_map',
                         endDateField: 'to_datefield',
+                        minValue:new Date(1323392457 * 1000),
                         format: 'Y-m-d',
                         width: 100,
                         listeners: {
@@ -75,6 +75,7 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
                         xtype: 'datefield',
                         ident: 'to_datefield',
                         startDateField: 'from_datefield',
+                        maxValue:new Date(),
                         vtype: 'daterange_ml_map',
                         format: 'Y-m-d',
                         width: 100,
@@ -88,7 +89,8 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
                         }
                     },{
                         xtype: 'button',
-                        text: 'Load Period',
+                        text: 'Load Data',
+                        iconCls: 'refresh-icon',
                         handler: function() {
                           me.loadMapData();
                         },scope: this

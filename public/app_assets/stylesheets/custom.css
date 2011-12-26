@@ -234,3 +234,11 @@
 .rainbow{
     background-image:url(/app_assets/images/rainbow.gif);
 }
+
+.control-play {
+    background-image:url(/app_assets/images/icons/control_play.gif);
+}
+
+.control-stop {
+    background-image:url(/app_assets/images/icons/control_stop.gif);
+}

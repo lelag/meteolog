@@ -17,14 +17,10 @@ MLControlPanelUi = Ext.extend(Ext.Panel, {
         align:'middle'
     },
 
-    registerElement: function(el) {
-      if(!this.registerStore)
-        this.registerStore = {};
-        this.registerStore[el.ident] = el;
-    },
-    getReg: function(ident) {
-      return this.registerStore[ident];
-    },
+    mustStopNow: false,
+    currentSliderPos : 0,
+    maxSliderPos : 6,
+    delay: 500,
 
     //width: 100,
     //style: "border-bottom: 100px;",
@@ -36,8 +32,18 @@ MLControlPanelUi = Ext.extend(Ext.Panel, {
             items: [{
                   xtype:'button',
                   text:'Play',
-                  flex:1,
-                  handler: this.playBack,
+                  width:50,
+                  style:'padding-right:10px',
+                  iconCls:'control-play',
+                  handler: this.startPlayBack,
+                  ref:'start_button',
+                  scope: this
+                },{
+                  xtype:'button',
+                  iconCls:'control-stop',
+                  disabled:true,
+                  handler: this.stopPlayBack,
+                  ref:'stop_button',
                   scope: this
                 },
                 {
@@ -49,12 +55,10 @@ MLControlPanelUi = Ext.extend(Ext.Panel, {
                     minValue: 0,
                     maxValue: 6,
                     flex: 10,
-                    ident: 'slider',
+                    ref: 'slider',
                     listeners: {
-                      render: function(e) {
-                        me.registerElement(e);
-                      },
                       change: function(s, n, o) {
+                        me.currentSliderPos = n;
                         me.fireEvent('slider_change', s, n, o);
                       }
                     }
@@ -65,27 +69,43 @@ MLControlPanelUi = Ext.extend(Ext.Panel, {
         MLControlPanelUi.superclass.initComponent.call(this);
         this.addEvents('slider_change');
     },
-    playBack : function(button) {
-      var b = button;
-      b.disable();
-      var slider = this.getReg('slider');
-      var delay = 1000;
-      for(var i=0, j=0; i <= slider.maxValue; i++) {
-        setTimeout(function() {
-          slider.setValue(j);
-          j++;
-          if(j==i)
-            b.enable();
-        }, delay);
-        delay = delay + 500;
+    startPlayBack : function(button) {
+      var me = this;
+      if(this.slider.getValue() == me.maxSliderPos) {
+        this.slider.setValue(0);
       }
+      this.start_button.disable();
+      this.stop_button.enable();
+
+      setTimeout(function() {
+        me.animStep(me);
+      }, this.delay);
+    },
+    animStep : function(me) {
+        if(!me)
+          var me = this;
+        if(me.slider.getValue() < me.maxSliderPos && !me.mustStopNow) {
+          me.slider.setValue(me.slider.getValue() + 1);
+          setTimeout(function() {
+            me.animStep(me);       
+          }, me.delay);
+        } else {
+          me.mustStopNow = false; 
+          me.start_button.enable();
+          me.stop_button.disable();
+        }
+    },
+    stopPlayBack : function(button) {
+      this.mustStopNow = true;
+      this.start_button.enable();
+      this.stop_button.disable();
     },
     setSlider : function(i) {
-      var slider = this.getReg('slider');
-      slider.setValue(i);
+      this.slider.setValue(i);
     },
     resetSlider : function(max) {
-      var slider = this.getReg('slider');
+      var slider = this.slider;
+      this.maxSliderPos = max;
       slider.setMinValue(0);
       slider.setMaxValue(max);
       slider.setValue(0);

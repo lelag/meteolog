@@ -365,10 +365,13 @@
                     var a_alpha = a_imageData[i];
                     if(a_alpha == null)
                         continue;
-                    if(t_imageData[i-3] > 45) {
+                    if(t_imageData[i-3] > 25) {
                       var c_alpha = c_imageData[i]++,
                           t_alpha = t_imageData[i];
-                      a_imageData[i] = ((t_alpha + (a_alpha * c_alpha)) / (c_alpha + 1)) >> 0;
+                      if(c_alpha == 0)
+                        a_imageData[i] = t_imageData[i];
+                      else
+                        a_imageData[i] = ((t_alpha + (a_alpha * c_alpha)) / (c_alpha + 1)) >> 0;
                     } 
                 }
                 //saving main grandient alpha map

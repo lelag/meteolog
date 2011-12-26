@@ -320,17 +320,9 @@
                     r2 = me.get("radiusOut"),
                     ctx = me.get("tactx"),
                     max = me.get("max"),
-                    // create a radial gradient with the defined parameters. we want to draw an alphamap
-               //     rgr = ctx.createRadialGradient(x,y,r1,x,y,r2),
-                    xb = x-r2, yb = y-r2, mul = 2*r2;
-                // the center of the radial gradient has .1 alpha value
-                //rgr.addColorStop(0, 'rgba(0,0,0,'+((count)?(count/me.store.max):'0.1')+')');  
-                // and it fades out to 0
-                //rgr.addColorStop(1, 'rgba(0,0,0,0)');
 
-                // drawing the gradient
-                //ctx.fillStyle = rgr;  
-                //ctx.fillRect(xb,yb,mul,mul);
+                    xb = x-r2, yb = y-r2, mul = 2*r2;
+
                 
                 ctx.beginPath();
                 ctx.arc(x, y, r2, 0, 2 * Math.PI, false);
@@ -361,11 +353,9 @@
                     y=height-x2;
 
                 var t_image = tctx.getImageData(x,y,x2,x2),
-                    t_imageData = t_image.data,
-                    t_length = t_imageData.length;
+                    t_imageData = t_image.data;
                 var c_image = cctx.getImageData(x,y,x2,x2),
-                    c_imageData = c_image.data,
-                    c_length = c_imageData.length;
+                    c_imageData = c_image.data;
                 var a_image = actx.getImageData(x,y,x2,x2),
                     a_imageData = a_image.data,
                     a_length = a_imageData.length;
@@ -375,15 +365,17 @@
                     var a_alpha = a_imageData[i];
                     if(a_alpha == null)
                         continue;
-                    if(t_imageData[i-3] == 50 || t_imageData[i-3] == 49) {
-                      var c_alpha = ++c_imageData[i],
+                    if(t_imageData[i-3] > 45) {
+                      var c_alpha = c_imageData[i]++,
                           t_alpha = t_imageData[i];
-                      a_imageData[i] = Math.round((t_alpha + (a_alpha * (c_alpha - 1))) / c_alpha);
-                    }  
+                      a_imageData[i] = ((t_alpha + (a_alpha * c_alpha)) / (c_alpha + 1)) >> 0;
+                    } 
                 }
+                //saving main grandient alpha map
                 a_image.data = a_imageData;
                 actx.putImageData(a_image,x,y);  
 
+                //saving count map
                 c_image.data = c_imageData;
                 cctx.putImageData(c_image,x,y);  
         },

@@ -1,6 +1,6 @@
 defaults: &defaults
   gmaps_api_key: ABQIAAAA5zHyazu_Llv3H_a1w9d_XhT2yXp_ZAY8_ufC3CFXhHIE1NvwkxTBZnWfXO7AdJaS6xPN3ezcz6ZHHQ
-  version: 0.2
+  version: 0.3
   
 development:
   <<: *defaults

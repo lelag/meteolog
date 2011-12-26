@@ -19,6 +19,7 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
     gradientLegend: null,
     settingWindow:null,
     gradient: { 0.05: "rgb(0,0,255)", 0.40: "rgb(0,255,255)", 0.60: "rgb(0,255,0)", 0.80: "rgb(255,255,0)", 0.95: "rgb(255,0,0)"},
+    gradientOpacity: 0.3,
     registerElement: function(el) {
       if(!this.registerStore)
         this.registerStore = {};
@@ -500,6 +501,8 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
       var opacity = parseInt(255/(100/o), 10);
       currentLayer.heatmap.set('opacity', opacity);
       currentLayer.setDataSet(this.mapData[this.currentLayer].data[this.mapDataRef[this.currentId]]);
+      this.gradientOpacity = o;
+      this.gradientLegend.setGradient(this.gradient, o / 100);
     },
     setGradientRange : function(v) {
       var currentLayer = this.getLayer(this.currentLayer);
@@ -523,7 +526,7 @@ MLMapPanelUi = Ext.extend(GeoExt.MapPanel, {
       currentLayer.heatmap.set('gradient', g);
       currentLayer.heatmap.initColorPalette();
       currentLayer.setDataSet(this.mapData[this.currentLayer].data[this.mapDataRef[this.currentId]]);
-      this.gradientLegend.setGradient(this.gradient);
+      this.gradientLegend.setGradient(this.gradient, this.gradientOpacity / 100);
     }
 
 });

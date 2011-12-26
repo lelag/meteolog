@@ -77,8 +77,8 @@ MLGradientLegend = Ext.extend(Ext.Window, {
     this.highValueEl = r.paper.text(185, 50, this.highValue).attr({'text-anchor': 'end'});
     this.unitTextEl= r.paper.text(95, 65, "");
   },
-  setGradient : function(gradient) {
-    var attr = this.buildGradientAttr(gradient);
+  setGradient : function(gradient, opacity) {
+    var attr = this.buildGradientAttr(gradient, opacity);
     this.rect.attr(attr);
   },
   setLimit : function(low, high, unit) {
@@ -110,7 +110,9 @@ MLGradientLegend = Ext.extend(Ext.Window, {
     b = decimalToHex(m[3]);
     return '#'+r+g+b;
   },
-  buildGradientAttr : function(gradient) {
+  buildGradientAttr : function(gradient, opacity) {
+    if(opacity == null)
+      var opacity = 0.3;
     function keys(obj) {
         var keys = [];
         for(var key in obj) {
@@ -127,7 +129,7 @@ MLGradientLegend = Ext.extend(Ext.Window, {
       var t = k[i] * 100;
       s += "-"+c+":"+t;
     }
-    return {'fill': s, 'opacity-opacity': 1};
+    return {'fill': s, 'opacity': opacity / 0.7};
   }
 
 
